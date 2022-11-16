@@ -4,8 +4,9 @@ from copy import deepcopy
 from datetime import date, datetime
 import yaml
 import random
+import logging
 
-
+logging.basicConfig(level=logging.INFO,filename="changes.log",filemode="w",format="%(message)s")
 
 class  Collection:
 
@@ -18,7 +19,6 @@ class  Collection:
         return "W"+"".join(random.choices(uuid4().hex, k=6)).upper()
 
 
-    
     def create_collection(self,opa_path:Path):
         collection_id = self.get_collection_id()
         opa_id = opa_path.stem
@@ -28,13 +28,15 @@ class  Collection:
             view = self.get_views(alignment,base.stem)
             self.write_view(view,collection_id)
 
+
     def write_view(self,view,collection_id):
         work_id = self.get_op_work_id()
         for lang in view.keys():
-            work_dir = Path(f"{collection_id}/{work_id}")
+            work_dir = Path(f"{collection_id}/{work_id} ")
             if not work_dir.is_dir():
                 work_dir.mkdir(exist_ok=True, parents=True)
             Path(f"{collection_id}/{work_id}/{work_id}-{lang}.txt").write_text(view[lang])
+
 
 
     def get_views(self,alignment,base):
@@ -80,6 +82,15 @@ class  Collection:
                 },
         }
         return metadata
+    
+
+    def log_change(self,changes):
+        logging.INFO(changes)
+    
+    def is_work_id_avaiabale(self,work_id):
+        pass
+            
+
 
 obj =Collection()
 opa_path = Path("AEC38C4A4")
